@@ -4,6 +4,7 @@ API V1: Comments Views
 ###
 # Libraries
 ###
+from helpers.permissions import IsOwnerOrReadOnly
 from posts.models import Post
 from comments.api.v1.serializers import CommentSerializer
 from comments.models import Comment
@@ -20,9 +21,9 @@ from rest_framework.exceptions import ValidationError
 # Viewsets
 ###
 class CommentViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def filter_queryset(self, queryset):
         return queryset.filter(post__pk=self.kwargs.get('post_pk'))

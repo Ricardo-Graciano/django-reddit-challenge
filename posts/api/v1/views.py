@@ -4,11 +4,13 @@ API V1: Posts Views
 ###
 # Libraries
 ###
+from helpers.permissions import IsOwnerOrReadOnly
 from posts.api.v1.serializers import PostSerializer
 from posts.models import Post
 from rest_framework import permissions, viewsets
 from rest_framework.exceptions import ValidationError
 from topics.models import Topic
+
 
 ###
 # Filters
@@ -19,9 +21,9 @@ from topics.models import Topic
 # Viewsets
 ###
 class PostViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def filter_queryset(self, queryset):
         return queryset.filter(topic__urlname=self.kwargs.get('topic_urlname'))
